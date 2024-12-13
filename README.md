@@ -101,23 +101,6 @@ The component provides several slots for customization:
 - `pagination`: Custom pagination controls
 - `column-[key]`: Custom column template
 
-## Example with Custom Templates
-
-```vue
-<template>
-  <LaraTable :columns="columns" :data-url="/api/users">
-    <template #column-actions="{ row }">
-      <button @click="editUser(row)">Edit</button>
-      <button @click="deleteUser(row)">Delete</button>
-    </template>
-    
-    <template #empty>
-      <div class="text-center">No data available</div>
-    </template>
-  </LaraTable>
-</template>
-```
-
 ## Laravel Backend Integration
 
 Example Laravel controller:
@@ -125,20 +108,17 @@ Example Laravel controller:
 ```php
 public function index(Request $request)
 {
-    $query = User::query();
-    
-    // Handle sorting
-    if ($request->has('sort')) {
-        $query->orderBy($request->sort, $request->direction ?? 'asc');
-    }
-    
-    // Handle search
-    if ($request->has('search')) {
-        $query->where('name', 'like', "%{$request->search}%")
-              ->orWhere('email', 'like', "%{$request->search}%");
-    }
-    
-    return $query->paginate($request->per_page ?? 15);
+    QueryBuilder::for(SendMessage::class)
+        ->allowedFilters([
+            AllowedFilter::callback('search', function ($query, $value) {
+                return $query->where('sender', 'like', '%' . $value . '%')
+                    ->orWhere('receiver', 'like', '%' . $value . '%')
+                    ->orWhere('message', 'like', '%' . $value . '%');
+            }),
+        ])
+        ->allowedSorts(['created_at', 'delivered_at'])
+        ->defaultSort('-created_at')
+        ->paginate(request()->query('show_items', 10))
 }
 ```
 
