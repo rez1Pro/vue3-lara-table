@@ -14,34 +14,37 @@ A flexible and customizable data table component for Vue 3 and Laravel applicati
 ## Installation
 
 ```
+npm install vue3-lara-table
+```
 
 ## Basic Usage
 
-```
+```vue
 <template>
-<LaraTable
-:columns="columns"
-:data-url="/api/users"
-:per-page="10"
-/>
+  <LaraTable
+    :columns="columns"
+    :data-url="/api/users"
+    :per-page="10"
+  />
 </template>
 <script setup>
 import { LaraTable } from 'vue3-lara-table'
+
 const columns = [
-{
-key: 'id',
-label: 'ID',
-sortable: true
-},
-{
-key: 'name',
-label: 'Name',
-sortable: true
-},
-{
-key: 'email',
-label: 'Email'
-}
+  {
+    key: 'id',
+    label: 'ID',
+    sortable: true
+  },
+  {
+    key: 'name',
+    label: 'Name', 
+    sortable: true
+  },
+  {
+    key: 'email',
+    label: 'Email'
+  }
 ]
 </script>
 ```
