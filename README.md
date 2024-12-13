@@ -21,31 +21,45 @@ npm install vue3-lara-table
 
 ```vue
 <template>
-  <LaraTable
-    :columns="columns"
-    :data-url="/api/users"
-    :per-page="10"
-  />
+  <LaraTable :items="props.sendMessages" :columns="columns" search-key="search"
+            search-placeholder="Search messages...">
+            <template #status="{ item }">
+                <span class="text-sm font-medium px-4 py-1.5 rounded-full transition-all duration-300" :class="{
+                    'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300': item.status === 'Delivered',
+                    'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300': item.status === 'Pending',
+                    'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300': item.status === 'Failed',
+                    'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300': item.status === 'Sent'
+                }">
+                    {{ item.status }}
+                </span>
+            </template>
+        </LaraTable>
 </template>
 <script setup>
-import { LaraTable } from 'vue3-lara-table'
+const props = defineProps<{
+    sendMessages: PaginatedResponse<SendMessageResource>;
+}>();
 
-const columns = [
-  {
-    key: 'id',
-    label: 'ID',
-    sortable: true
-  },
-  {
-    key: 'name',
-    label: 'Name', 
-    sortable: true
-  },
-  {
-    key: 'email',
-    label: 'Email'
-  }
-]
+const columns = ref<TableColumn[]>([
+    {
+        key: 'sender',
+        label: 'Sender',
+        width: '20%'
+    },
+    {
+        key: 'receiver',
+        label: 'Receiver',
+        width: '20%'
+    },
+    {
+        key: 'message',
+        label: 'Message',
+        width: '40%'
+    },
+    { key: 'status', label: 'Status', width: '20%' },
+    { key: 'created_at', label: 'Sent At', width: '20%' },
+    { key: 'delivered_at', label: 'Delivered At', width: '20%' }
+]);
 </script>
 ```
 
