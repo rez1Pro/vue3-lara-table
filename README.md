@@ -1,15 +1,26 @@
 # Vue 3 Laravel Table
 
-A flexible and customizable data table component for Vue 3 and Laravel applications, built specifically for Laravel pagination with Spatie/Query support for search functionality.
+A flexible and customizable data table component for Vue 3 and Laravel applications, built specifically for Laravel pagination with search, sort, and filtering capabilities. Designed to work seamlessly with Inertia.js.
+
+## Screenshots
+
+### Desktop View
+![Desktop View](ss/image-desktop.png)
+
+## Mobile View
+![Mobile View](ss/image-mobile.png)
+
 
 ## Features
 
-- Server-side pagination
-- Sorting capabilities
-- Customizable columns
-- Search functionality
-- Responsive design
-- Laravel integration
+- Responsive design with desktop and mobile views
+- Dark mode support
+- Debounced search functionality
+- Sort columns by clicking headers
+- Customizable items per page
+- Preserves state and scroll position during navigation
+- Built-in loading states
+- Tailwind CSS styling with smooth transitions
 
 ## Installation
 
@@ -20,105 +31,129 @@ npm install vue3-lara-table
 ## Basic Usage
 
 ```vue
-<template>
-  <LaraTable :items="props.sendMessages" :columns="columns" search-key="search"
-            search-placeholder="Search messages...">
-            <template #status="{ item }">
-                <span class="text-sm font-medium px-4 py-1.5 rounded-full transition-all duration-300" :class="{
-                    'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300': item.status === 'Delivered',
-                    'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300': item.status === 'Pending',
-                    'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300': item.status === 'Failed',
-                    'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300': item.status === 'Sent'
-                }">
-                    {{ item.status }}
-                </span>
-            </template>
-        </LaraTable>
-</template>
-<script setup>
-const props = defineProps<{
-    sendMessages: PaginatedResponse<SendMessageResource>;
-}>();
+<script lang="ts" setup>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import type { PaginatedResponse } from '@/vue3-lara-table/types.d.ts';
+import { PlusIcon } from '@heroicons/vue/24/outline';
+import { Head, Link } from '@inertiajs/vue3';
+import { PropType, ref } from 'vue';
 
-const columns = ref<TableColumn[]>([
+const props = defineProps({
+    agencies: Object as PropType<PaginatedResponse<App.Data.AgencyData>>
+});
+
+const columns = ref([
     {
-        key: 'sender',
-        label: 'Sender',
-        width: '20%'
+        key: 'id',
+        label: 'ID',
+        width: '100px',
     },
     {
-        key: 'receiver',
-        label: 'Receiver',
-        width: '20%'
+        key: 'name',
+        label: 'Name',
+        width: '200px',
     },
     {
-        key: 'message',
-        label: 'Message',
-        width: '40%'
+        key: 'abta',
+        label: 'ABTA',
+        width: '100px',
     },
-    { key: 'status', label: 'Status', width: '20%' },
-    { key: 'created_at', label: 'Sent At', width: '20%' },
-    { key: 'delivered_at', label: 'Delivered At', width: '20%' }
+    {
+        key: 'phone',
+        label: 'Phone',
+        width: '150px',
+    },
+    {
+        key: 'city',
+        label: 'City',
+        width: '150px',
+    },
+    {
+        key: 'atype',
+        label: 'Type',
+        width: '100px',
+    },
+    {
+        key: 'actions',
+        label: 'Actions',
+        width: '100px',
+    },
 ]);
 </script>
+<template>
+   <LaraTable :columns="columns" :items="props.agencies" searchKey="name">
+                <template #add-item>
+                    <Link :href="route('enquiries.agencies.create')"
+                        class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                    <PlusIcon class="w-4 h-4 mr-2" />
+                    Add New Agency
+                    </Link>
+                </template>
+
+                <template #actions="{ item } : { item: App.Data.AgencyData }">
+                    <div class="flex gap-2">
+                        <Link :href="route('enquiries.agencies.edit', item.id)"
+                            class="text-blue-500 hover:text-blue-700">
+                        Edit
+                        </Link>
+                        <Link :href="route('enquiries.agencies.destroy', item.id)"
+                            class="text-red-500 hover:text-red-700">
+                        Delete
+                        </Link>
+                    </div>
+                </template>
+            </LaraTable>
+</template>
 ```
 
 ## Props
 
-| Prop | Type | Required | Default | Description |
-|------|------|----------|---------|-------------|
-| columns | Array | Yes | - | Array of column definitions |
-| dataUrl | String | Yes | - | API endpoint for fetching data |
-| perPage | Number | No | 15 | Items per page |
-| searchable | Boolean | No | false | Enable search functionality |
-| sortable | Boolean | No | true | Enable sorting functionality |
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| items | PaginatedResponse<T> | Yes | Laravel paginated data |
+| columns | TableColumn[] | Yes | Array of column definitions |
+| searchKey | string | Yes | Key to use for search filtering |
+| searchPlaceholder | string | No | Placeholder text for search input |
+| enableAddItem | boolean | No | Show/hide add item button |
 
 ## Column Properties
 
 | Property | Type | Required | Description |
 |----------|------|----------|-------------|
-| key | String | Yes | Column identifier |
-| label | String | Yes | Column header text |
-| sortable | Boolean | No | Enable sorting for this column |
-| formatter | Function | No | Custom formatter function |
-| width | String | No | Column width (e.g., '100px', '10%') |
-
-## Events
-
-| Event | Parameters | Description |
-|-------|------------|-------------|
-| page-changed | page | Emitted when page changes |
-| sort-changed | { column, direction } | Emitted when sort changes |
-| search-changed | searchQuery | Emitted when search query changes |
+| key | string | Yes | Column identifier |
+| label | string | Yes | Column header text |
+| width | string | No | Column width (e.g., '100px', '20%') |
 
 ## Slots
 
-The component provides several slots for customization:
+The component provides several customizable slots:
 
-- `header`: Custom header template
-- `loading`: Custom loading state
-- `empty`: Custom empty state
-- `pagination`: Custom pagination controls
-- `column-[key]`: Custom column template
+- `add-item`: Custom add item button template
+- `[column.key]`: Custom column content template
+- `actions`: Custom actions column template
+
+Example with custom slots:
 
 ## Laravel Backend Integration
 
-Example Laravel controller:
+Example Laravel controller using Spatie Query Builder:
 
 ```php
+use Spatie\QueryBuilder\QueryBuilder;
+use Spatie\QueryBuilder\AllowedFilter;
+
 public function index(Request $request)
 {
-    QueryBuilder::for(SendMessage::class)
-        ->allowedFilters([
-            AllowedFilter::callback('search', function ($query, $value) {
-                return $query->where('sender', 'like', '%' . $value . '%')
-                    ->orWhere('receiver', 'like', '%' . $value . '%')
-                    ->orWhere('message', 'like', '%' . $value . '%');
-            }),
-        ])
-        ->allowedSorts(['created_at', 'delivered_at'])
-        ->defaultSort('-created_at')
-        ->paginate(request()->query('show_items', 10))
+    return Inertia::render('Enquiries/AgenciesList', [
+            'agencies' => AgencyData::collect(QueryBuilder::for(Agency::class)
+                ->allowedSorts(['name', 'city', 'atype', 'abta', 'phone'])
+                ->allowedFilters([
+                    AllowedFilter::callback('name', function ($query, $value) {
+                        $query->where('name', 'like', '%' . $value . '%');
+                    }),
+                ])
+                ->paginate(request()->get('per_page', 10)))
+        ]);
 }
 ```
 
