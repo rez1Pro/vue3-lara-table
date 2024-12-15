@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="T extends Record<string, any>">
 import { Link, router } from '@inertiajs/vue3';
-import { computed, ref, watch } from 'vue';
+import { computed, PropType, ref, watch } from 'vue';
 import type { PaginatedResponse, TableColumn } from '../types';
 
 const emit = defineEmits(['add-item']);
@@ -19,23 +19,45 @@ defineSlots<{
     [K in keyof T | 'actions']: (props: SlotProps) => any;
 }>();
 
-const props = defineProps<{
+interface Props {
     items: PaginatedResponse<T>;
     columns: TableColumn[];
     searchPlaceholder?: string;
-    searchKey: keyof T;
+    searchKey: string;
     enableAddItem?: boolean;
-}>();
+}
+
+const props = defineProps({
+    items: {
+        type: Object as PropType<PaginatedResponse<T>>,
+        required: true
+    },
+    columns: {
+        type: Array as PropType<TableColumn[]>,
+        required: true
+    },
+    searchPlaceholder: {
+        type: String,
+        required: false
+    },
+    searchKey: {
+        type: String,
+        default: 'search'
+    },
+    enableAddItem: {
+        type: Boolean,
+        default: false
+    }
+}) as Props;
 
 // Add debounce timeout ref
 const searchTimeout = ref<number | null>(null);
 
 const filterKey = computed(() => {
-    const key = String(props.searchKey);
-    return `filter[${key}]` || 'filter[search]';
+    return `filter[${props.searchKey}]` || 'filter[search]';
 });
 
-const search = ref<string>(route().params.filter?.search as any || '');
+const search = ref<string>(route().params.filter ? (route().params.filter as unknown as Record<string, string>)[props.searchKey] : '');
 
 watch(search, (value: string) => {
     if (searchTimeout.value) {
@@ -260,13 +282,26 @@ const sort = (column: string) => {
                             </Link>
                         </nav>
                     </div>
-                    <div class="w-full sm:w-48">
-                        <select v-model="perPage" @change="updatePerPage"
-                            class="w-full rounded-lg border-2 border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 bg-white dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100">
-                            <option value="10">10 per page</option>
-                            <option value="25">25 per page</option>
-                            <option value="50">50 per page</option>
-                            <option value="100">100 per page</option>
+                    <div class="w-full sm:w-48 flex items-center gap-2">
+                        <label class="text-gray-700 dark:text-gray-300 font-medium">Show:</label>
+                        <select v-model="perPage" @change="updatePerPage" class="flex-1 rounded-lg border-2 border-gray-300 bg-white dark:bg-gray-800
+                            text-gray-700 dark:text-gray-100 px-4 py-2
+                            shadow-sm hover:shadow-lg transition-all duration-300 ease-in-out
+                            focus:border-blue-500 focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50
+                            dark:border-gray-600 dark:hover:border-blue-400
+                            appearance-none bg-no-repeat bg-right
+                            cursor-pointer hover:-translate-y-0.5 transform
+                            bg-gradient-to-r from-white to-gray-50
+                            dark:from-gray-800 dark:to-gray-700
+                            font-medium">
+                            <option value="10" class="py-2 px-4 hover:bg-blue-50 dark:hover:bg-gray-700">10 items
+                            </option>
+                            <option value="25" class="py-2 px-4 hover:bg-blue-50 dark:hover:bg-gray-700">25 items
+                            </option>
+                            <option value="50" class="py-2 px-4 hover:bg-blue-50 dark:hover:bg-gray-700">50 items
+                            </option>
+                            <option value="100" class="py-2 px-4 hover:bg-blue-50 dark:hover:bg-gray-700">100 items
+                            </option>
                         </select>
                     </div>
                 </div>
@@ -274,3 +309,5 @@ const sort = (column: string) => {
         </div>
     </div>
 </template>
+
+<style lang="scss" src="../dist/index.css" scoped></style>
