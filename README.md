@@ -10,6 +10,8 @@ A flexible and customizable data table component for Vue 3 and Laravel applicati
 ## Mobile View
 ![Mobile View](ss/image-mobile.png)
 
+## Requirement
+- Laravel + InertiaJs
 
 ## Features
 
@@ -33,7 +35,7 @@ npm install vue3-lara-table
 Add the following code to your main entry point file ``` (main.ts, main.js, app.js, or app.ts) ```. This registers the LaraTable component globally so it can be used anywhere in your Vue application without needing to import it in individual components.
 
 ```ts
-import { LaraTable } from 'vue3-lara-table';
+import LaraTable from 'vue3-lara-table';
 
 app.use(LaraTable);
 ```

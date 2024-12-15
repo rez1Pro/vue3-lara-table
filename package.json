@@ -6,7 +6,8 @@
     "module": ".index.js",
     "type": "module",
     "files": [
-        "dist"
+        "dist/index.css",
+        "src"
     ],
     "style": "./dist/index.css",
     "exports": {
