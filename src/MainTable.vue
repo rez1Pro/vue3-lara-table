@@ -3,7 +3,7 @@ import { Link, router } from '@inertiajs/vue3';
 import { computed, PropType, ref, watch } from 'vue';
 import type { PaginatedResponse, TableColumn } from '../types';
 
-const emit = defineEmits(['add-item']);
+const emit = defineEmits(['add-item', 'row-click']);
 // Define slot types
 type SlotProps = {
     item: T;
@@ -176,7 +176,8 @@ const sort = (column: string) => {
                     <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                         <template v-for="(item, index) in paginatedItems" :key="item.id || index">
                             <tr v-if="item"
-                                class="hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors duration-200">
+                                class="hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
+                                @click="$emit('row-click', item)">
                                 <td v-for="column in columns" :key="column.key"
                                     class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-200">
                                     <slot v-if="$slots[column.key]" :name="column.key" :item="item" :column="column">
@@ -194,7 +195,8 @@ const sort = (column: string) => {
             <!-- Mobile Card View -->
             <div class="sm:hidden space-y-4">
                 <div v-for="(item, index) in paginatedItems" :key="item?.id || index"
-                    class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 space-y-3 hover:shadow-lg transition-shadow duration-200 border border-gray-200 dark:border-gray-700">
+                    class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 space-y-3 hover:shadow-lg transition-shadow duration-200 border border-gray-200 dark:border-gray-700 cursor-pointer"
+                    @click="$emit('row-click', item)">
                     <div v-for="column in columns" :key="column.key" class="flex justify-between items-center">
                         <span class="font-medium text-gray-500 dark:text-gray-400">{{ column.label }}:</span>
                         <div class="text-gray-800 dark:text-gray-200">
