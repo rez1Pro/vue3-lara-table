@@ -154,7 +154,8 @@ const sort = (column: string) => {
 
             <!-- Desktop Table View -->
             <div class="hidden sm:block overflow-x-auto rounded-lg">
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <table v-if="paginatedItems.length > 0"
+                    class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                     <thead class="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800">
                         <tr>
                             <th v-for="column in columns" :key="column.key" scope="col"
@@ -190,22 +191,43 @@ const sort = (column: string) => {
                         </template>
                     </tbody>
                 </table>
+                <div v-else
+                    class="flex flex-col items-center justify-center py-12 bg-white dark:bg-gray-800 rounded-lg">
+                    <svg class="w-16 h-16 text-gray-400 dark:text-gray-600 mb-4" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p class="text-lg font-medium text-gray-600 dark:text-gray-400">No data found</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-500">Try adjusting your search or filters</p>
+                </div>
             </div>
 
             <!-- Mobile Card View -->
             <div class="sm:hidden space-y-4">
-                <div v-for="(item, index) in paginatedItems" :key="item?.id || index"
-                    class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 space-y-3 hover:shadow-lg transition-shadow duration-200 border border-gray-200 dark:border-gray-700 cursor-pointer"
-                    @click="$emit('row-click', item)">
-                    <div v-for="column in columns" :key="column.key" class="flex justify-between items-center">
-                        <span class="font-medium text-gray-500 dark:text-gray-400">{{ column.label }}:</span>
-                        <div class="text-gray-800 dark:text-gray-200">
-                            <slot v-if="$slots[column.key]" :name="column.key" :item="item" :column="column"></slot>
-                            <template v-else>
-                                {{ item?.[column.key] }}
-                            </template>
+                <template v-if="paginatedItems.length > 0">
+                    <div v-for="(item, index) in paginatedItems" :key="item?.id || index"
+                        class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 space-y-3 hover:shadow-lg transition-shadow duration-200 border border-gray-200 dark:border-gray-700 cursor-pointer"
+                        @click="$emit('row-click', item)">
+                        <div v-for="column in columns" :key="column.key" class="flex justify-between items-center">
+                            <span class="font-medium text-gray-500 dark:text-gray-400">{{ column.label }}:</span>
+                            <div class="text-gray-800 dark:text-gray-200">
+                                <slot v-if="$slots[column.key]" :name="column.key" :item="item" :column="column"></slot>
+                                <template v-else>
+                                    {{ item?.[column.key] }}
+                                </template>
+                            </div>
                         </div>
                     </div>
+                </template>
+                <div v-else class="flex flex-col items-center justify-center py-8 bg-white dark:bg-gray-800 rounded-lg">
+                    <svg class="w-12 h-12 text-gray-400 dark:text-gray-600 mb-3" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p class="text-base font-medium text-gray-600 dark:text-gray-400">No data found</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-500">Try adjusting your search or filters</p>
                 </div>
             </div>
 
