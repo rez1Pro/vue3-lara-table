@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "typeRoots": [
+            "./index.d.ts"
+        ],
+        "declaration": true,
+        "declarationDir": "./",
+        "outDir": "dist"
+    },
+    "include": [
+        "src/**/*",
+        "index.d.ts",
+        "types.d.ts"
+    ]
+}
