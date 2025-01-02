@@ -3,6 +3,10 @@ import { Link, router } from '@inertiajs/vue3';
 import { computed, PropType, ref, watch } from 'vue';
 import type { PaginatedResponse, TableColumn } from '../types';
 
+// Get URL parameters
+const urlParams = new URLSearchParams(window.location.search);
+const params = Object.fromEntries(urlParams.entries());
+
 const emit = defineEmits(['add-item', 'row-click']);
 // Define slot types
 type SlotProps = {
@@ -57,7 +61,7 @@ const filterKey = computed(() => {
     return `filter[${props.searchKey}]` || 'filter[search]';
 });
 
-const search = ref<string>(route().params.filter ? (route().params.filter as unknown as Record<string, string>)[props.searchKey] : '');
+const search = ref<string>(params.filter ? (params.filter as unknown as Record<string, string>)[props.searchKey] : '');
 
 watch(search, (value: string) => {
     if (searchTimeout.value) {
@@ -107,7 +111,7 @@ const sort = (column: string) => {
     const sortParam = sortDirection.value === 'desc' ? `-${column}` : column;
 
     router.get(props.items.meta?.path || props.items.path, {
-        ...route().params,
+        ...params,
         sort: sortParam
     }, {
         preserveScroll: true,
@@ -246,8 +250,8 @@ const sort = (column: string) => {
                         </p>
                     </div>
                     <div class="w-full flex justify-center px-4 sm:px-0">
-                        <nav v-if="props.items.meta" class="isolate inline-flex flex-wrap justify-center gap-1 sm:gap-2"
-                            aria-label="Pagination">
+                        <nav v-if="props.items.meta?.links"
+                            class="isolate inline-flex flex-wrap justify-center gap-1 sm:gap-2" aria-label="Pagination">
                             <Link v-for="page in props.items.meta.links" :key="page.label" :href="page.url || '#'"
                                 preserve-scroll preserve-state :class="[
                                     'relative inline-flex items-center px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium transition-all duration-200',
@@ -334,4 +338,4 @@ const sort = (column: string) => {
     </div>
 </template>
 
-<style lang="scss" src="../dist/index.css" scoped></style>
+<style src="./../dist/index.css" scoped></style>

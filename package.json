@@ -1,37 +1,29 @@
 {
     "name": "vue3-lara-table",
-    "version": "1.1.9",
+    "version": "1.2.0",
     "description": "A flexible and customizable data table component for Vue 3 and Laravel applications, built specifically for Laravel pagination with Spatie/Query support for search functionality.",
-    "main": "index.ts",
-    "module": ".index.ts",
+    "main": "index.js",
+    "module": ".index.js",
     "type": "module",
     "types": "./index.d.ts",
     "files": [
-        "dist/index.css",
-        "index.ts",
+        "index.js",
         "src",
         "ss",
         "types.d.ts",
-        "README.md",
-        "tailwind.config.js",
-        "vite.config.js",
-        "postcss.config.js",
-        "package.json",
-        "index.d.ts",
-        "tsconfig.json"
+        "README.md"
     ],
-    "style": "./dist/index.css",
     "exports": {
         ".": {
-            "import": "./index.ts"
+            "import": "./index.js"
         },
-        "./dist/index.css": "./dist/index.css",
         "./types.d.ts": "./types.d.ts"
     },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "build:css": "tailwindcss -i ./src/style.css -o ./dist/index.css"
     },
     "repository": {
         "type": "git",
@@ -57,12 +49,9 @@
     "devDependencies": {
         "autoprefixer": "^10.4.20",
         "postcss": "^8.4.49",
-        "postcss-nesting": "^8.0.1",
+        "postcss-nesting": "^13.0.1",
         "sass-embedded": "^1.83.0",
-        "tailwindcss": "^3.4.16"
+        "tailwindcss": "^3.4.17"
     },
-    "dependencies": {
-        "@tailwindcss/postcss": "^4.0.0-beta.7",
-        "@tailwindcss/vite": "^4.0.0-beta.7"
-    }
+    "dependencies": {}
 }
