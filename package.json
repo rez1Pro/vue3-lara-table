@@ -1,6 +1,6 @@
 {
     "name": "vue3-lara-table",
-    "version": "1.2.3",
+    "version": "1.2.5",
     "description": "A flexible and customizable data table component for Vue 3 and Laravel applications, built specifically for Laravel pagination with Spatie/Query support for search functionality.",
     "main": "index.ts",
     "module": ".index.ts",

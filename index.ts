@@ -1,7 +1,7 @@
 import LaraTable from './src/MainTable.vue';
 
 export default {
-    install: (app) => {
+    install: (app: any) => {
         app.component('LaraTable', LaraTable);
     }
 }
