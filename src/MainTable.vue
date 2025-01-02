@@ -8,20 +8,11 @@ const urlParams = new URLSearchParams(window.location.search);
 const params = Object.fromEntries(urlParams.entries());
 
 const emit = defineEmits(['add-item', 'row-click']);
-// Define slot types
-type SlotProps = {
-    item: T;
-    column: TableColumn;
-}
+
 
 // Add sorting state
 const sortColumn = ref<string | null>(null);
 const sortDirection = ref<'asc' | 'desc' | null>(null);
-
-// Add type definition for slots
-defineSlots<{
-    [K in keyof T | 'actions']: (props: SlotProps) => any;
-}>();
 
 interface Props {
     items: PaginatedResponse<T>;
@@ -141,8 +132,8 @@ const sort = (column: string) => {
                 </div>
 
                 <div class="w-full sm:w-auto">
-                    <slot :enableAddItem="enableAddItem" name="add-item">
-                        <button v-if="enableAddItem" @click="$emit('add-item')"
+                    <slot v-if="props.enableAddItem" name="add-item">
+                        <button v-if="props.enableAddItem" @click="$emit('add-item')"
                             class="w-full sm:w-auto group inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 rounded-lg font-semibold text-sm text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                 class="h-5 w-5 mr-2 group-hover:scale-110 transition-transform duration-200" fill="none"
