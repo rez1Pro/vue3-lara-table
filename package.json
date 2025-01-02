@@ -12,7 +12,7 @@
         "ss",
         "types.d.ts",
         "README.md",
-        "dist/index.ts.css",
+        "dist/index.css",
         "tsconfig.json",
         "index.d.ts"
     ],
