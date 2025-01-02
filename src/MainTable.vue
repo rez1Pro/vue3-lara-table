@@ -338,4 +338,4 @@ const sort = (column: string) => {
     </div>
 </template>
 
-<style src="./../dist/index.ts.css" scoped></style>
+<style src="./../dist/index.css" scoped></style>
