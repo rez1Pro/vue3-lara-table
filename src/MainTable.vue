@@ -20,6 +20,12 @@ interface Props {
     searchPlaceholder?: string;
     searchKey: string;
     enableAddItem?: boolean;
+    classes?: {
+        table?: string;
+        header?: string;
+        body?: string;
+        paginationActiveButton?: string;
+    };
 }
 
 const props = defineProps({
@@ -42,6 +48,10 @@ const props = defineProps({
     enableAddItem: {
         type: Boolean,
         default: false
+    },
+    classes: {
+        type: Object as PropType<Props['classes']>,
+        default: () => ({})
     }
 }) as Props;
 
@@ -229,18 +239,40 @@ const sort = (column: string) => {
             <!-- Pagination Section -->
             <div class="mt-8 flex flex-col items-center justify-between gap-4 sm:gap-6">
                 <div class="w-full flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div class="text-center sm:text-left">
-                        <p class="text-sm text-gray-600 dark:text-gray-300">
+                    <div class="text-center sm:text-left flex items-center gap-2">
+                        <p class="text-sm flex items-center gap-2 text-gray-600 dark:text-gray-300">
                             Showing
                             <span class="font-bold text-blue-600 dark:text-blue-400">{{ from }}</span>
                             to
                             <span class="font-bold text-blue-600 dark:text-blue-400">{{ to }}</span>
                             of
                             <span class="font-bold text-blue-600 dark:text-blue-400">{{ total }}</span>
-
                         </p>
+
+                        <div class="w-full sm:w-48 flex items-center gap-2">
+                            <label class="text-gray-700 dark:text-gray-300 font-medium">Show:</label>
+                            <select v-model="perPage" @change="updatePerPage" class="flex-1 rounded-lg border-2 border-gray-300 bg-white dark:bg-gray-800
+                            text-gray-700 dark:text-gray-100 px-4 py-2
+                            shadow-sm hover:shadow-lg transition-all duration-300 ease-in-out
+                            focus:border-blue-500 focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50
+                            dark:border-gray-600 dark:hover:border-blue-400
+                            appearance-none bg-no-repeat bg-right
+                            cursor-pointer
+                            bg-gradient-to-r from-white to-gray-50
+                            dark:from-gray-800 dark:to-gray-700
+                            font-medium">
+                                <option value="10" class="py-2 px-4 hover:bg-blue-50 dark:hover:bg-gray-700">10 items
+                                </option>
+                                <option value="25" class="py-2 px-4 hover:bg-blue-50 dark:hover:bg-gray-700">25 items
+                                </option>
+                                <option value="50" class="py-2 px-4 hover:bg-blue-50 dark:hover:bg-gray-700">50 items
+                                </option>
+                                <option value="100" class="py-2 px-4 hover:bg-blue-50 dark:hover:bg-gray-700">100 items
+                                </option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="w-full flex justify-center px-4 sm:px-0">
+                    <div class="w-full flex justify-end px-4 sm:px-0">
                         <nav v-if="props.items.meta?.links"
                             class="isolate inline-flex flex-wrap justify-center gap-1 sm:gap-2" aria-label="Pagination">
                             <Link v-for="page in props.items.meta.links" :key="page.label" :href="page.url || '#'"
@@ -276,7 +308,7 @@ const sort = (column: string) => {
                             <Link v-for="page in props.items.links" :key="page.label" :href="page.url || '#'"
                                 preserve-scroll preserve-state :class="[
                                     'relative inline-flex items-center px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium transition-all duration-200',
-                                    page.active ? 'z-10 bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md hover:from-blue-600 hover:to-blue-700' :
+                                    page.active ? props.classes?.paginationActiveButton ?? 'z-10 bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md hover:from-blue-600 hover:to-blue-700' :
                                         'text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700',
                                     !page.url ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:shadow-md',
                                     'rounded-lg transform hover:-translate-y-0.5'
@@ -300,28 +332,6 @@ const sort = (column: string) => {
                             <template v-else>{{ page.label }}</template>
                             </Link>
                         </nav>
-                    </div>
-                    <div class="w-full sm:w-48 flex items-center gap-2">
-                        <label class="text-gray-700 dark:text-gray-300 font-medium">Show:</label>
-                        <select v-model="perPage" @change="updatePerPage" class="flex-1 rounded-lg border-2 border-gray-300 bg-white dark:bg-gray-800
-                            text-gray-700 dark:text-gray-100 px-4 py-2
-                            shadow-sm hover:shadow-lg transition-all duration-300 ease-in-out
-                            focus:border-blue-500 focus:ring-4 focus:ring-blue-300 focus:ring-opacity-50
-                            dark:border-gray-600 dark:hover:border-blue-400
-                            appearance-none bg-no-repeat bg-right
-                            cursor-pointer hover:-translate-y-0.5 transform
-                            bg-gradient-to-r from-white to-gray-50
-                            dark:from-gray-800 dark:to-gray-700
-                            font-medium">
-                            <option value="10" class="py-2 px-4 hover:bg-blue-50 dark:hover:bg-gray-700">10 items
-                            </option>
-                            <option value="25" class="py-2 px-4 hover:bg-blue-50 dark:hover:bg-gray-700">25 items
-                            </option>
-                            <option value="50" class="py-2 px-4 hover:bg-blue-50 dark:hover:bg-gray-700">50 items
-                            </option>
-                            <option value="100" class="py-2 px-4 hover:bg-blue-50 dark:hover:bg-gray-700">100 items
-                            </option>
-                        </select>
                     </div>
                 </div>
             </div>
