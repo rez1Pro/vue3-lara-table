@@ -7,6 +7,7 @@ import type { PaginatedResponse, TableColumn } from '../types';
 const urlParams = new URLSearchParams(window.location.search);
 const params = Object.fromEntries(urlParams.entries());
 
+
 const emit = defineEmits(['add-item', 'row-click']);
 
 
@@ -62,7 +63,7 @@ const filterKey = computed(() => {
     return `filter[${props.searchKey}]` || 'filter[search]';
 });
 
-const search = ref<string>(params.filter ? (params.filter as unknown as Record<string, string>)[props.searchKey] : '');
+const search = ref<string>(params[filterKey.value] || '');
 
 watch(search, (value: string) => {
     if (searchTimeout.value) {
@@ -277,12 +278,14 @@ const sort = (column: string) => {
                             class="isolate inline-flex flex-wrap justify-center gap-1 sm:gap-2" aria-label="Pagination">
                             <Link v-for="page in props.items.meta.links" :key="page.label" :href="page.url || '#'"
                                 preserve-scroll preserve-state :class="[
-                                    'relative inline-flex items-center px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium transition-all duration-200',
-                                    page.active ? 'z-10 bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md hover:from-blue-600 hover:to-blue-700' :
-                                        'text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700',
-                                    !page.url ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:shadow-md',
-                                    'rounded-lg transform hover:-translate-y-0.5'
-                                ]" :disabled="!page.url">
+                                    'relative inline-flex items-center px-3 sm:px-4 py-2 text-sm font-medium rounded-lg',
+                                    page.active ? (props.classes?.paginationActiveButton || 'bg-blue-600 text-white border-2 border-blue-600 dark:bg-blue-500 dark:border-blue-500 shadow-md pointer-events-none') :
+                                        'text-blue-600 dark:text-blue-400 bg-white dark:bg-gray-800 border-2 border-blue-400 dark:border-blue-500 hover:bg-blue-50 dark:hover:bg-gray-700 hover:border-blue-500 dark:hover:border-blue-400 underline',
+                                    !page.url ?
+                                        'opacity-40 cursor-not-allowed bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-600' :
+                                        'cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-700 dark:hover:text-blue-300',
+                                    'transition-colors duration-200'
+                                ]" :disabled="!page.url || page.active">
                             <template v-if="page.label.includes('Previous')">
                                 <svg class="h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 20 20" fill="currentColor"
                                     aria-hidden="true">
@@ -307,12 +310,14 @@ const sort = (column: string) => {
                             aria-label="Pagination">
                             <Link v-for="page in props.items.links" :key="page.label" :href="page.url || '#'"
                                 preserve-scroll preserve-state :class="[
-                                    'relative inline-flex items-center px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium transition-all duration-200',
-                                    page.active ? props.classes?.paginationActiveButton ?? 'z-10 bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md hover:from-blue-600 hover:to-blue-700' :
-                                        'text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700',
-                                    !page.url ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:shadow-md',
-                                    'rounded-lg transform hover:-translate-y-0.5'
-                                ]" :disabled="!page.url">
+                                    'relative inline-flex items-center px-3 sm:px-4 py-2 text-sm font-medium rounded-lg',
+                                    page.active ? (props.classes?.paginationActiveButton || 'bg-blue-600 text-white border-2 border-blue-600 dark:bg-blue-500 dark:border-blue-500 shadow-md pointer-events-none') :
+                                        'text-blue-600 dark:text-blue-400 bg-white dark:bg-gray-800 border-2 border-blue-400 dark:border-blue-500 hover:bg-blue-50 dark:hover:bg-gray-700 hover:border-blue-500 dark:hover:border-blue-400 underline',
+                                    !page.url ?
+                                        'opacity-40 cursor-not-allowed bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-600' :
+                                        'cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-700 dark:hover:text-blue-300',
+                                    'transition-colors duration-200'
+                                ]" :disabled="!page.url || page.active">
                             <template v-if="page.label.includes('Previous')">
                                 <svg class="h-4 w-4 sm:h-5 sm:w-5" viewBox="0 0 20 20" fill="currentColor"
                                     aria-hidden="true">
